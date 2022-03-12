@@ -153,13 +153,50 @@ btnLogin.addEventListener('click', function (e) {
     labelWelcome.style.color = 'red';
   }
   inputLoginUsername.value = inputLoginPin.value = '';
+  smalRefresh();
+});
+let smalRefresh = function () {
   ekrangachiqar(kirganUser);
-
+  pulyigindisi(kirganUser);
   labelBalance.textContent = `${pulyigindisi(kirganUser)}$`;
   stat(kirganUser);
   labelSumIn.textContent = `${sumIn}$`;
   labelSumOut.textContent = `${Math.abs(out)}$`;
   labelSumInterest.textContent = `${Math.abs(komissiya)}$`;
+};
+btnTransfer.addEventListener('click', function (d) {
+  d.preventDefault();
+  let transferTo = String(inputTransferTo.value);
+  let transferAmount = Number(inputTransferAmount.value);
+  let transferUser = account.find(function (val) {
+    return transferTo === val.userName;
+  });
+  if (transferUser !== kirganUser) {
+    if (pulyigindisi(kirganUser) > transferAmount) {
+      if (transferUser.movements.push(transferAmount)) {
+        kirganUser.movements.push(transferAmount * -1);
+      }
+      smalRefresh();
+    }
+  }
+});
+btnLoan.addEventListener('click', function (f) {
+  f.preventDefault();
+  let loanAmount = Number(inputLoanAmount.value);
+  if (sumIn * 0.1 >= loanAmount) {
+    kirganUser.movements.push(loanAmount);
+    smalRefresh();
+  }
+});
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+  let closeUser = inputCloseUsername.value;
+  let closePin = Number(inputClosePin.value);
+  if (closeUser == kirganUser.userName && closePin == kirganUser.pin) {
+    account.splice(account.indexOf(kirganUser), 1);
+  }
+  console.log(account);
+  containerApp.style.opacity = 0;
 });
 
 const currencies = new Map([
